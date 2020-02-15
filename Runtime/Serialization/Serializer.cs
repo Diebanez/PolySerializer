@@ -358,7 +358,7 @@ public class Serializer
                         var list = serializedField.GetValue(obj) as ICollection;
                         foreach (var listObj in list)
                         {
-                            SerializeObject(ref writer, listObj, false, false);
+                            SerializeObject(ref writer, listObj, true, false);
                         }
                     }
                     else if (serializedField.FieldType.IsArray)

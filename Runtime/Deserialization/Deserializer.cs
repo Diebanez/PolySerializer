@@ -46,7 +46,16 @@ public class Deserializer
     /// <returns>The object deserialized based on the node value</returns>
     private object DeserializeToObject(XmlNode node)
     {
-        var objectType = Type.GetType(node.Attributes["type"].Value);
+        Type objectType;
+        if (node.Attributes["type"].Value.Substring(0, 11) == "UnityEngine")
+            objectType = Type.GetType(node.Attributes["type"].Value + ", UnityEngine");
+        else
+            objectType = Type.GetType(node.Attributes["type"].Value);
+
+        if (objectType == null)
+        {
+            Debug.Log("NULL");
+        }
 
         if (objectType.IsArray)
         {
