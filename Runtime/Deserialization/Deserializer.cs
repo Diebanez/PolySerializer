@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using UnityEngine;
 
 namespace PolySerializer
 {
@@ -37,7 +38,7 @@ public class Deserializer
         var text = File.ReadAllText(filePath);
         return DeserializeFromString(text);
     }
-    
+
     /// <summary>
     /// Private recursive method, used to deserialized an object
     /// </summary>
@@ -72,7 +73,7 @@ public class Deserializer
             var newList = Activator.CreateInstance(objectType);
 
             var collection = newList as IList;
-            
+
             foreach (XmlElement arrayChild in node.ChildNodes)
             {
                 var newElement = DeserializeToObject(arrayChild);
@@ -81,7 +82,7 @@ public class Deserializer
                     collection.Add(newElement);
                 }
             }
-            
+
             return newList;
         }
         else if (objectType == typeof(char))
@@ -148,6 +149,33 @@ public class Deserializer
         {
             var fieldValue = decimal.Parse(node.FirstChild.Value);
             return fieldValue;
+        }
+        else if (objectType == typeof(Vector2))
+        {
+            var fieldValue = new Vector2(float.Parse(node.FirstChild.Value.Split(';')[0]), float.Parse(node.FirstChild.Value.Split(';')[1]));
+            return fieldValue;
+        }
+        else if (objectType == typeof(Vector3))
+        {
+            var fieldValue = new Vector3(float.Parse(node.FirstChild.Value.Split(';')[0]), float.Parse(node.FirstChild.Value.Split(';')[1]), float.Parse(node.FirstChild.Value.Split(';')[2]));
+            return fieldValue;
+        }
+        else if (objectType == typeof(Vector4))
+        {
+            var fieldValue = new Vector4(float.Parse(node.FirstChild.Value.Split(';')[0]), float.Parse(node.FirstChild.Value.Split(';')[1]), float.Parse(node.FirstChild.Value.Split(';')[2]),
+                float.Parse(node.FirstChild.Value.Split(';')[3]));
+            return fieldValue;
+        }
+        else if (objectType == typeof(Color))
+        {
+            var fieldValue = new Color(float.Parse(node.FirstChild.Value.Split(';')[0]), float.Parse(node.FirstChild.Value.Split(';')[1]), float.Parse(node.FirstChild.Value.Split(';')[2]),
+                float.Parse(node.FirstChild.Value.Split(';')[3]));
+            return fieldValue;
+        }
+        else if (objectType == typeof(Sprite))
+        {
+            var texture = Resources.Load<Texture2D>(node.FirstChild.Value);
+            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f));
         }
         else if (objectType.IsEnum)
         {

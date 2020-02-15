@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using UnityEditor;
+using UnityEngine;
 
 namespace PolySerializer
 {
@@ -43,7 +45,7 @@ public class Serializer
         writer.WriteStartAttribute("type");
         writer.WriteString(objectToSerialize.GetType().FullName);
         writer.WriteEndAttribute();
-        SerializeObject(ref writer, objectToSerialize);
+        SerializeObject(ref writer, objectToSerialize, false);
         writer.WriteEndElement();
         writer.WriteEndDocument();
 
@@ -166,6 +168,32 @@ public class Serializer
                     decimal value;
                     value = (decimal) obj;
                     writer.WriteString((value).ToString(CultureInfo.InvariantCulture));
+                }
+                else if (objectType == typeof(Vector2))
+                {
+                    Vector2 value = (Vector2) obj;
+                    writer.WriteString(value.x + ";" + value.y);
+                }
+                else if (objectType == typeof(Vector3))
+                {
+                    Vector3 value = (Vector3) obj;
+                    writer.WriteString(value.x + ";" + value.y + ";" + value.z);
+                }
+                else if (objectType == typeof(Vector4))
+                {
+                    Vector4 value = (Vector4) obj;
+                    writer.WriteString(value.x + ";" + value.y + ";" + value.z + ";" + value.w);
+                }
+                else if (objectType == typeof(Color))
+                {
+                    Color value = (Color) obj;
+                    writer.WriteString(value.r + ";" + value.g + ";" + value.g + ";" + value.a);
+                }
+                else if (objectType == typeof(Sprite))
+                {
+#if UNITY_EDITOR
+                    writer.WriteString(Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(((Sprite) obj).texture)));
+#endif
                 }
                 else if (objectType.IsEnum)
                 {
@@ -292,6 +320,32 @@ public class Serializer
                         decimal value;
                         value = (decimal) serializedField.GetValue(obj);
                         writer.WriteString((value).ToString(CultureInfo.InvariantCulture));
+                    }
+                    else if (serializedField.FieldType == typeof(Vector2))
+                    {
+                        Vector2 value = (Vector2) serializedField.GetValue(obj);
+                        writer.WriteString(value.x + ";" + value.y);
+                    }
+                    else if (serializedField.FieldType == typeof(Vector3))
+                    {
+                        Vector3 value = (Vector3) serializedField.GetValue(obj);
+                        writer.WriteString(value.x + ";" + value.y + ";" + value.z);
+                    }
+                    else if (serializedField.FieldType == typeof(Vector4))
+                    {
+                        Vector4 value = (Vector4) serializedField.GetValue(obj);
+                        writer.WriteString(value.x + ";" + value.y + ";" + value.z + ";" + value.w);
+                    }
+                    else if (serializedField.FieldType == typeof(Color))
+                    {
+                        Color value = (Color) serializedField.GetValue(obj);
+                        writer.WriteString(value.r + ";" + value.g + ";" + value.g + ";" + value.a);
+                    }
+                    else if (serializedField.FieldType == typeof(Sprite))
+                    {
+#if UNITY_EDITOR
+                        writer.WriteString(Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(((Sprite) serializedField.GetValue(obj)).texture)));
+#endif
                     }
                     else if (serializedField.FieldType.IsEnum)
                     {
