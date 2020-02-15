@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -36,120 +37,12 @@ public class Deserializer
         var text = File.ReadAllText(filePath);
         return DeserializeFromString(text);
     }
-
+    
     /// <summary>
     /// Private recursive method, used to deserialized an object
     /// </summary>
     /// <param name="node">The <see cref="XmlNode"/> actually being deserialized</param>
     /// <returns>The object deserialized based on the node value</returns>
-    // private object DeserializeToObject(XmlNode node)
-    // {
-    //     object newObject = Activator.CreateInstance(Type.GetType(node.Attributes["type"].Value));
-    //
-    //     var objectType = newObject.GetType();
-    //
-    //     foreach (XmlElement childNode in node.ChildNodes)
-    //     {
-    //         var field = objectType.GetField(childNode.Name);
-    //         if (field != null)
-    //         {
-    //             var childType = Type.GetType(childNode.GetAttribute("type"));
-    //             if (childType.IsArray)
-    //             {
-    //                 List<object> newArray = new List<object>();
-    //                 foreach (XmlElement arrayChild in childNode.ChildNodes)
-    //                 {
-    //                     var newElement = DeserializeToObject(arrayChild);
-    //                     if (newElement != null)
-    //                     {
-    //                         newArray.Add(newElement);
-    //                     }
-    //                 }
-    //
-    //                 field.SetValue(newObject, newArray.ToArray());
-    //             }
-    //             else if (childType.IsGenericType && (childType.GetGenericTypeDefinition() == typeof(List<>)))
-    //             {
-    //             }
-    //             else if (childType == typeof(char))
-    //             {
-    //                 var fieldValue = char.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(string))
-    //             {
-    //                 var fieldValue = childNode.FirstChild.Value;
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(bool))
-    //             {
-    //                 var fieldValue = childNode.FirstChild.Value != "0";
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(sbyte))
-    //             {
-    //                 var fieldValue = sbyte.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(byte))
-    //             {
-    //                 var fieldValue = byte.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(short))
-    //             {
-    //                 var fieldValue = short.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(ushort))
-    //             {
-    //                 var fieldValue = ushort.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(int))
-    //             {
-    //                 var fieldValue = int.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(uint))
-    //             {
-    //                 var fieldValue = uint.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(long))
-    //             {
-    //                 var fieldValue = long.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(ulong))
-    //             {
-    //                 var fieldValue = ulong.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(double))
-    //             {
-    //                 var fieldValue = double.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType == typeof(decimal))
-    //             {
-    //                 var fieldValue = decimal.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else if (childType.IsEnum)
-    //             {
-    //                 var fieldValue = int.Parse(childNode.FirstChild.Value);
-    //                 field.SetValue(newObject, fieldValue);
-    //             }
-    //             else
-    //             {
-    //                 field.SetValue(newObject, DeserializeToObject(childNode));
-    //             }
-    //         }
-    //     }
-    //
-    //     return newObject;
-    // }
     private object DeserializeToObject(XmlNode node)
     {
         var objectType = Type.GetType(node.Attributes["type"].Value);
@@ -176,6 +69,20 @@ public class Deserializer
         }
         else if (objectType.IsGenericType && (objectType.GetGenericTypeDefinition() == typeof(List<>)))
         {
+            var newList = Activator.CreateInstance(objectType);
+
+            var collection = newList as IList;
+            
+            foreach (XmlElement arrayChild in node.ChildNodes)
+            {
+                var newElement = DeserializeToObject(arrayChild);
+                if (newElement != null)
+                {
+                    collection.Add(newElement);
+                }
+            }
+            
+            return newList;
         }
         else if (objectType == typeof(char))
         {
