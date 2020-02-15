@@ -75,165 +75,255 @@ public class Serializer
         var type = obj.GetType();
         var fields = checkSerialized ? type.GetFields().Where(x => x.IsDefined(typeof(XmlSerializedAttribute), true)) : type.GetFields();
 
-        foreach (var serializedField in fields)
+        if (directValue)
         {
-            //Serialize Field Name
-            writer.WriteStartElement(serializedField.Name);
-            //Serialize Field Type
-            writer.WriteStartAttribute("type");
-            writer.WriteString(serializedField.GetValue(obj).GetType().FullName);
-            writer.WriteEndAttribute();
-
-            //Serialize Field Value
-            if (serializedField.FieldType == typeof(char))
+            if (obj != null)
             {
-                char value;
-                if (directValue)
+                var objectType = obj.GetType();
+
+                //Serialize Field Name
+                writer.WriteStartElement("Empty");
+                //Serialize Field Type
+                writer.WriteStartAttribute("type");
+                writer.WriteString(objectType.FullName);
+                writer.WriteEndAttribute();
+
+                //Serialize Field Value
+                if (objectType == typeof(char))
+                {
+                    char value;
                     value = (char) obj;
-                else
-                    value = (char) serializedField.GetValue(obj);
-                writer.WriteString(value.ToString());
-            }
-            else if (serializedField.FieldType == typeof(string))
-            {
-                string value;
-                if (directValue)
+                    writer.WriteString(value.ToString());
+                }
+                else if (objectType == typeof(string))
+                {
+                    string value;
                     value = (string) obj;
-                else
-                    value = (string) serializedField.GetValue(obj);
-                writer.WriteString(value);
-            }
-            else if (serializedField.FieldType == typeof(bool))
-            {
-                bool value;
-                if (directValue)
+                    writer.WriteString(value);
+                }
+                else if (objectType == typeof(bool))
+                {
+                    bool value;
                     value = (bool) obj;
-                else
-                    value = (bool) serializedField.GetValue(obj);
-                writer.WriteString(value ? "1" : "0");
-            }
-            else if (serializedField.FieldType == typeof(sbyte))
-            {
-                sbyte value;
-                if (directValue)
+                    writer.WriteString(value ? "1" : "0");
+                }
+                else if (objectType == typeof(sbyte))
+                {
+                    sbyte value;
                     value = (sbyte) obj;
-                else
-                    value = (sbyte) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString());
-            }
-            else if (serializedField.FieldType == typeof(byte))
-            {
-                byte value;
-                if (directValue)
+                    writer.WriteString((value).ToString());
+                }
+                else if (objectType == typeof(byte))
+                {
+                    byte value;
                     value = (byte) obj;
-                else
-                    value = (byte) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString());
-            }
-            else if (serializedField.FieldType == typeof(short))
-            {
-                short value;
-                if (directValue)
+                    writer.WriteString((value).ToString());
+                }
+                else if (objectType == typeof(short))
+                {
+                    short value;
                     value = (short) obj;
-                else
-                    value = (short) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString());
-            }
-            else if (serializedField.FieldType == typeof(ushort))
-            {
-                ushort value;
-                if (directValue)
+                    writer.WriteString((value).ToString());
+                }
+                else if (objectType == typeof(ushort))
+                {
+                    ushort value;
                     value = (ushort) obj;
-                else
-                    value = (ushort) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString());
-            }
-            else if (serializedField.FieldType == typeof(int))
-            {
-                int value;
-                if (directValue)
+                    writer.WriteString((value).ToString());
+                }
+                else if (objectType == typeof(int))
+                {
+                    int value;
                     value = (int) obj;
-                else
-                    value = (int) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString());
-            }
-            else if (serializedField.FieldType == typeof(uint))
-            {
-                uint value;
-                if (directValue)
+                    writer.WriteString((value).ToString());
+                }
+                else if (objectType == typeof(uint))
+                {
+                    uint value;
                     value = (uint) obj;
-                else
-                    value = (uint) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString());
-            }
-            else if (serializedField.FieldType == typeof(long))
-            {
-                long value;
-                if (directValue)
+                    writer.WriteString((value).ToString());
+                }
+                else if (objectType == typeof(long))
+                {
+                    long value;
                     value = (long) obj;
-                else
-                    value = (long) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString());
-            }
-            else if (serializedField.FieldType == typeof(double))
-            {
-                double value;
-                if (directValue)
+                    writer.WriteString((value).ToString());
+                }
+                else if (objectType == typeof(double))
+                {
+                    double value;
                     value = (double) obj;
-                else
-                    value = (double) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString());
-            }
-            else if (serializedField.FieldType == typeof(double))
-            {
-                double value;
-                if (directValue)
+                    writer.WriteString((value).ToString());
+                }
+                else if (objectType == typeof(double))
+                {
+                    double value;
                     value = (double) obj;
-                else
-                    value = (double) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString(CultureInfo.InvariantCulture));
-            }
-            else if (serializedField.FieldType == typeof(decimal))
-            {
-                decimal value;
-                if (directValue)
+                    writer.WriteString((value).ToString(CultureInfo.InvariantCulture));
+                }
+                else if (objectType == typeof(decimal))
+                {
+                    decimal value;
                     value = (decimal) obj;
-                else
-                    value = (decimal) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString(CultureInfo.InvariantCulture));
-            }
-            else if (serializedField.FieldType.IsEnum)
-            {
-                int value;
-                if (directValue)
+                    writer.WriteString((value).ToString(CultureInfo.InvariantCulture));
+                }
+                else if (objectType.IsEnum)
+                {
+                    int value;
                     value = (int) obj;
+                    writer.WriteString((value).ToString());
+                }
+                else if (objectType.IsGenericType && (objectType.GetGenericTypeDefinition() == typeof(List<>)))
+                {
+                    var list = obj as ICollection;
+                    foreach (var listObj in list)
+                    {
+                        SerializeObject(ref writer, listObj, true, false);
+                    }
+                }
+                else if (objectType.IsArray)
+                {
+                    object[] array = (object[]) obj;
+                    foreach (var arrayObj in array)
+                    {
+                        SerializeObject(ref writer, arrayObj, true, false);
+                    }
+                }
                 else
-                    value = (int) serializedField.GetValue(obj);
-                writer.WriteString((value).ToString());
-            }
-            else if (serializedField.FieldType.IsGenericType && (serializedField.FieldType.GetGenericTypeDefinition() == typeof(List<>)))
-            {
-                var list = serializedField.GetValue(obj) as ICollection;
-                foreach (var listObj in list)
                 {
-                    SerializeObject(ref writer, listObj, true, false);
+                    SerializeObject(ref writer, obj);
                 }
-            }
-            else if (serializedField.FieldType.IsArray)
-            {
-                object[] array = (object[]) serializedField.GetValue(obj);
-                foreach (var arrayObj in array)
-                {
-                    SerializeObject(ref writer, arrayObj, true, false);
-                }
-            }
-            else
-            {
-                SerializeObject(ref writer, serializedField.GetValue(obj));
-            }
 
-            //Close Serialized Node
-            writer.WriteEndElement();
+                //Close Serialized Node
+                writer.WriteEndElement();
+            }
+        }
+        else
+        {
+            foreach (var serializedField in fields)
+            {
+                object valueObject = serializedField.GetValue(obj);
+                if (valueObject != null)
+                {
+                    //Serialize Field Name
+                    writer.WriteStartElement(serializedField.Name);
+                    //Serialize Field Type
+                    writer.WriteStartAttribute("type");
+
+
+                    writer.WriteString(valueObject.GetType().FullName);
+                    writer.WriteEndAttribute();
+
+                    //Serialize Field Value
+                    if (serializedField.FieldType == typeof(char))
+                    {
+                        char value;
+                        value = (char) serializedField.GetValue(obj);
+                        writer.WriteString(value.ToString());
+                    }
+                    else if (serializedField.FieldType == typeof(string))
+                    {
+                        string value;
+                        value = (string) serializedField.GetValue(obj);
+                        writer.WriteString(value);
+                    }
+                    else if (serializedField.FieldType == typeof(bool))
+                    {
+                        bool value;
+                        value = (bool) serializedField.GetValue(obj);
+                        writer.WriteString(value ? "1" : "0");
+                    }
+                    else if (serializedField.FieldType == typeof(sbyte))
+                    {
+                        sbyte value;
+                        value = (sbyte) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString());
+                    }
+                    else if (serializedField.FieldType == typeof(byte))
+                    {
+                        byte value;
+                        value = (byte) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString());
+                    }
+                    else if (serializedField.FieldType == typeof(short))
+                    {
+                        short value;
+                        value = (short) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString());
+                    }
+                    else if (serializedField.FieldType == typeof(ushort))
+                    {
+                        ushort value;
+                        value = (ushort) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString());
+                    }
+                    else if (serializedField.FieldType == typeof(int))
+                    {
+                        int value;
+                        value = (int) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString());
+                    }
+                    else if (serializedField.FieldType == typeof(uint))
+                    {
+                        uint value;
+                        value = (uint) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString());
+                    }
+                    else if (serializedField.FieldType == typeof(long))
+                    {
+                        long value;
+                        value = (long) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString());
+                    }
+                    else if (serializedField.FieldType == typeof(double))
+                    {
+                        double value;
+                        value = (double) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString());
+                    }
+                    else if (serializedField.FieldType == typeof(double))
+                    {
+                        double value;
+                        value = (double) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString(CultureInfo.InvariantCulture));
+                    }
+                    else if (serializedField.FieldType == typeof(decimal))
+                    {
+                        decimal value;
+                        value = (decimal) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString(CultureInfo.InvariantCulture));
+                    }
+                    else if (serializedField.FieldType.IsEnum)
+                    {
+                        int value;
+                        value = (int) serializedField.GetValue(obj);
+                        writer.WriteString((value).ToString());
+                    }
+                    else if (serializedField.FieldType.IsGenericType && (serializedField.FieldType.GetGenericTypeDefinition() == typeof(List<>)))
+                    {
+                        var list = serializedField.GetValue(obj) as ICollection;
+                        foreach (var listObj in list)
+                        {
+                            SerializeObject(ref writer, listObj, false, false);
+                        }
+                    }
+                    else if (serializedField.FieldType.IsArray)
+                    {
+                        object[] array = (object[]) serializedField.GetValue(obj);
+                        foreach (var arrayObj in array)
+                        {
+                            SerializeObject(ref writer, arrayObj, true, false);
+                        }
+                    }
+                    else
+                    {
+                        SerializeObject(ref writer, serializedField.GetValue(obj));
+                    }
+
+                    //Close Serialized Node
+                    writer.WriteEndElement();
+                }
+            }
         }
     }
 }
