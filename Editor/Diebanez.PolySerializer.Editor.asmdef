@@ -1,0 +1,16 @@
+{
+    "name": "Diebabez.PolySerializer.Editor",
+    "references": [
+        "GUID:ca024b31e3abcb34ba3a313480ce485b"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
