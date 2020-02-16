@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Xml;
 using UnityEngine;
 
@@ -46,15 +47,18 @@ public class Deserializer
     /// <returns>The object deserialized based on the node value</returns>
     private object DeserializeToObject(XmlNode node)
     {
-        Type objectType;
-        if (node.Attributes["type"].Value.Substring(0, 11) == "UnityEngine")
-            objectType = Type.GetType(node.Attributes["type"].Value + ", UnityEngine");
-        else
-            objectType = Type.GetType(node.Attributes["type"].Value);
+        Type objectType = null;
+
+        foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            objectType = a.GetType(node.Attributes["type"].Value);
+            if(objectType != null)
+                break;
+        }
 
         if (objectType == null)
         {
-            Debug.Log("NULL");
+            throw new Exception("Type Not Found");
         }
 
         if (objectType.IsArray)
