@@ -1,6 +1,6 @@
 {
     "name" : "com.diebanez.poly-serializer",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "displayName": "Poly Serializer",
     "description": "A C# XML serializer which support polymorphism and inheritance.",
     "unity" : "2019.2",

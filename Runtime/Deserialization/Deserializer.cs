@@ -197,8 +197,21 @@ public class Deserializer
         }
         else
         {
-            object newObject = Activator.CreateInstance(Type.GetType(node.Attributes["type"].Value));
-            var newObjectType = newObject.GetType();
+            Type newObjectType = null;
+
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                newObjectType = a.GetType(node.Attributes["type"].Value);
+                if(newObjectType != null)
+                    break;
+            }
+
+            if (newObjectType == null)
+            {
+                throw new Exception("Type Not Found");
+            }
+            
+            object newObject = Activator.CreateInstance(newObjectType);
             foreach (XmlElement childNode in node.ChildNodes)
             {
                 var field = newObjectType.GetField(childNode.Name);
@@ -210,8 +223,6 @@ public class Deserializer
 
             return newObject;
         }
-
-        return null;
     }
 }
 }
