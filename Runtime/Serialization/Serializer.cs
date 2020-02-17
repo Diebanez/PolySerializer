@@ -101,7 +101,7 @@ public class Serializer
                 {
                     string value;
                     value = (string) obj;
-                    writer.WriteString(value);
+                    writer.WriteString(value == "" ? "." : value);
                 }
                 else if (objectType == typeof(bool))
                 {
@@ -253,7 +253,7 @@ public class Serializer
                     {
                         string value;
                         value = (string) serializedField.GetValue(obj);
-                        writer.WriteString(value);
+                        writer.WriteString(value == "" ? "." : value);
                     }
                     else if (serializedField.FieldType == typeof(bool))
                     {

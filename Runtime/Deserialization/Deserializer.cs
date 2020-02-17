@@ -105,7 +105,7 @@ public class Deserializer
         }
         else if (objectType == typeof(string))
         {
-            var fieldValue = node.FirstChild.Value;
+            var fieldValue = node.FirstChild.Value == "." ? "" : node.FirstChild.Value;
             return fieldValue;
         }
         else if (objectType == typeof(bool))
