@@ -97,6 +97,10 @@ public class Deserializer
             }
 
             return newList;
+        }else if (objectType == typeof(float))
+        {
+            var fieldValue = float.Parse(node.FirstChild.Value);
+            return fieldValue;
         }
         else if (objectType == typeof(char))
         {
