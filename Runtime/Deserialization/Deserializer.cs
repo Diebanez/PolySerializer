@@ -99,7 +99,7 @@ public class Deserializer
             return newList;
         }else if (objectType == typeof(float))
         {
-            var fieldValue = float.Parse(node.FirstChild.Value);
+            var fieldValue = string.IsNullOrEmpty(node.FirstChild.Value) ? 0f : float.Parse(node.FirstChild.Value);
             return fieldValue;
         }
         else if (objectType == typeof(char))
