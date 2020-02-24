@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -99,7 +100,7 @@ public class Deserializer
             return newList;
         }else if (objectType == typeof(float))
         {
-            var fieldValue = string.IsNullOrEmpty(node.FirstChild.Value) ? 0f : float.Parse(node.FirstChild.Value);
+            var fieldValue = string.IsNullOrEmpty(node.FirstChild.Value) ? 0f : float.Parse(node.FirstChild.Value, CultureInfo.InvariantCulture);
             return fieldValue;
         }
         else if (objectType == typeof(char))
@@ -216,9 +217,16 @@ public class Deserializer
             }
             
             object newObject = Activator.CreateInstance(newObjectType);
+            
+            BindingFlags flags = BindingFlags.Public | 
+                                 BindingFlags.NonPublic | 
+                                 BindingFlags.Static | 
+                                 BindingFlags.Instance | 
+                                 BindingFlags.DeclaredOnly;
+            
             foreach (XmlElement childNode in node.ChildNodes)
             {
-                var field = newObjectType.GetField(childNode.Name);
+                var field = newObjectType.GetField(childNode.Name, flags);
                 if (field != null)
                 {
                     field.SetValue(newObject, DeserializeToObject(childNode));

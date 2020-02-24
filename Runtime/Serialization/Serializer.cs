@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using UnityEditor;
@@ -75,10 +77,16 @@ namespace PolySerializer
         private void SerializeObject(ref XmlWriter writer, object obj, bool directValue = false,
             bool checkSerialized = true)
         {
+            BindingFlags flags = BindingFlags.Public | 
+                                 BindingFlags.NonPublic | 
+                                 BindingFlags.Static | 
+                                 BindingFlags.Instance | 
+                                 BindingFlags.DeclaredOnly;
+            
             var type = obj.GetType();
             var fields = checkSerialized
-                ? type.GetFields().Where(x => x.IsDefined(typeof(XmlSerializedAttribute), true))
-                : type.GetFields();
+                ? type.GetFields(flags).Where(x => x.IsDefined(typeof(XmlSerializedAttribute), true))
+                : type.GetFields(flags);
 
             if (directValue)
             {
@@ -221,8 +229,7 @@ namespace PolySerializer
                     }
                     else if (objectType.IsArray)
                     {
-                        object[] array = (object[]) obj;
-                        foreach (var arrayObj in array)
+                        foreach (var arrayObj in (Array)obj)
                         {
                             SerializeObject(ref writer, arrayObj, true, false);
                         }
@@ -380,8 +387,8 @@ namespace PolySerializer
                         }
                         else if (serializedField.FieldType.IsArray)
                         {
-                            object[] array = (object[]) serializedField.GetValue(obj);
-                            foreach (var arrayObj in array)
+                            var value = serializedField.GetValue(obj);
+                            foreach (var arrayObj in (Array)value)
                             {
                                 SerializeObject(ref writer, arrayObj, true, false);
                             }
