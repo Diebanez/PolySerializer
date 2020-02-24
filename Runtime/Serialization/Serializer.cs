@@ -80,8 +80,7 @@ namespace PolySerializer
             BindingFlags flags = BindingFlags.Public | 
                                  BindingFlags.NonPublic | 
                                  BindingFlags.Static | 
-                                 BindingFlags.Instance | 
-                                 BindingFlags.DeclaredOnly;
+                                 BindingFlags.Instance;
             
             var type = obj.GetType();
             var fields = checkSerialized

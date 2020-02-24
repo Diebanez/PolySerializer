@@ -217,12 +217,11 @@ public class Deserializer
             }
             
             object newObject = Activator.CreateInstance(newObjectType);
-            
-            BindingFlags flags = BindingFlags.Public | 
-                                 BindingFlags.NonPublic | 
-                                 BindingFlags.Static | 
-                                 BindingFlags.Instance | 
-                                 BindingFlags.DeclaredOnly;
+
+            BindingFlags flags = BindingFlags.Public |
+                                 BindingFlags.NonPublic |
+                                 BindingFlags.Static |
+                                 BindingFlags.Instance;
             
             foreach (XmlElement childNode in node.ChildNodes)
             {
